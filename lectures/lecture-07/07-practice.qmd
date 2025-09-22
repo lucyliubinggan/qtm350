@@ -519,7 +519,7 @@ gh repo view --web
 :::{style="margin-top: 30px; font-size: 19px;"}
 Please complete the following tasks:
 
-1. Create a new directory called `git-practice` and initialize it as a Git repository
+1. Create a new directory called `git-practice` and initialise it as a Git repository
 2. Create a file named `README.md` with the content "# Git Practice Repository"
 3. Create a subdirectory called `src` and inside it create an empty file named `main.py`
 4. Stage and commit all changes with the message "Initial commit with README and main.py"
