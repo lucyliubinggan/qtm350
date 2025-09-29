@@ -57,7 +57,7 @@ editor:
 :::{style="text-align: center; font-size: 18px;"}
 ![](figures/power-posing.jpg){width="50%"}
 
-Amy Cuddy demonstrating her theory of "power posing". It could never be replicated. [Ted Talk](https://www.ted.com/talks/amy_cuddy_your_body_language_may_shape_who_you_are?language=en) with 72 million views!
+Amy Cuddy demonstrating her theory of "power posing". It could never be replicated. [Ted Talk](https://www.ted.com/talks/amy_cuddy_your_body_language_may_shape_who_you_are?language=en) with 75 million views!
 :::
 :::
 :::
@@ -233,20 +233,25 @@ Additionally, you can download and install Quarto using:
 - [Homebrew](https://brew.sh/) (macOS/linux)
 
 ```{.bash filename="Bash"}
-brew install quarto
+brew install --cask quarto
 ```
 
 ![](figures/quarto-homebrew.png)
 :::
 
 :::{.column width="50%"}
-- [Chocolatey](https://chocolatey.org/) (Windows)
+- [WSL](https://learn.microsoft.com/en-us/windows/wsl/install) (Windows Subsystem for Linux)
 
-```{.PowerShell filename="PowerShell"}
-choco install quarto
+```{.bash filename="bash"}
+wget https://github.com/quarto-dev/quarto-cli/releases/download/v1.8.24/quarto-1.8.24-linux-amd64.deb
+sudo dpkg -i quarto-1.8.24-linux-amd64.deb
+# If you get dependency errors, run:
+sudo apt-get install -f
 ```
 
-![](figures/quarto-chocolatey.png)
+![](figures/quarto-wsl.png)
+
+<https://simonstolarczyk.com/posts/misc/quarto_preview.html>
 :::
 :::
 :::
@@ -281,6 +286,33 @@ quarto --help
 #| attr-output: 'style="font-size: 50%;"'
 quarto check
 ```
+:::
+
+## Installing Pandoc and LaTeX
+
+:::{style="margin-top: 30px; font-size: 24px;"}
+- Quarto comes with Pandoc, so you don't need to install it separately
+- However, if you want to render PDF files, you need to install a LaTeX
+- I recommend [TinyTeX](https://yihui.org/tinytex/), which is a lightweight, portable, cross-platform, and easy-to-maintain LaTeX distribution
+
+```{bash}
+#| echo: true
+#| eval: false
+# Install TinyTeX in the terminal:
+quarto install tinytex
+```
+
+- If you have `R` installed, you can also install TinyTeX using the `tinytex` package
+- See <https://yihui.org/tinytex/#installation> for more details
+
+```{r}
+#| echo: true
+#| eval: false
+# In R:
+install.packages("tinytex")
+tinytex::install_tinytex()
+```
+
 :::
 
 ## Creating a new Quarto project
@@ -454,6 +486,22 @@ demo/Manuscript
 ```
 
 ![](figures/quarto-project-manuscript.png){width="80%"}
+:::
+
+## Quarto files
+
+:::{style="margin-top: 30px; font-size: 24px;"}
+- Most of the time, however, you will be working with single `.qmd` files for reports or presentations
+- [You don't need to create a project for that!]{.alert}
+- You can create a new Quarto file using the command line or your favourite editor
+
+```{bash}
+#| echo: true
+#| eval: false
+touch my-report.qmd
+```
+
+- Then you can open the file in your editor and start writing
 :::
 
 # Quarto engines {background-color="#2d4563"}
