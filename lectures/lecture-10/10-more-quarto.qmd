@@ -291,7 +291,7 @@ source ~/.bashrc
 - A `bibtex` file is a plain text file with `.bib` extension
 - You can add references to your YAML header
 - Use `@key` to cite a reference, `[@key]` to cite in parentheses
-- The key is the first line of the reference in the `.bib` file (e.g., `@article{nash1950equilibrium,`)
+- The key is the first line of the reference in the `.bib` file (e.g., `@article{nash1950equilibrium}`)
 - More information [here](https://quarto.org/docs/authoring/references.html)
 :::
 
