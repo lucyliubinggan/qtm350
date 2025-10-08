@@ -44,7 +44,10 @@ title: My Quarto Document
 subtitle: A simple example
 author: Danilo Freire
 date: 2024-09-30
-format: html
+format: 
+  html:
+    theme: cosmo
+    embed-resources: true
 editor:
   render-on-save: true
 ---
@@ -425,16 +428,26 @@ format:
 
 ## How to create slides
 
-:::{style="margin-top: 30px; font-size: 24px;"}
+:::{style="margin-top: 30px; font-size: 20px;"}
 - Create a new Quarto document with `format: revealjs`
 - Add a YAML header with the metadata, as usual
+- It's a good idea to add `embed-resources: true` to the YAML header, so that all images and tables are included in the HTML file. More options here: <https://quarto.org/docs/reference/formats/presentations/revealjs.html>
+
+```yaml
+title: "My Presentation"
+author: "Your Name"
+format:
+  revealjs:
+    embed-resources: true
+```
+
 - Add your content in Markdown
 - `#` creates a new section, `##` a new slide
 - Quarto uses `:::` to create and end a new "element" in the slides. For instance, to create columns, change font size, centre text, etc.
   - If you know html, this is the same as creating `div` elements (e.g., `<div class="columns"> </div>`)
 - You can add code chunks, images, tables, and references
 - To render the slides, use the `quarto` command:
-  - `quarto render slides.qmd --to slides`
+  - `quarto render slides.qmd --to revealjs`
 :::
 
 ## Example
