@@ -322,12 +322,12 @@ Source: [DataCamp](https://www.datacamp.com/blog/what-is-a-virtual-machine)
 :::{.columns}
 :::{.column width="40%"}
 - Next, you will be asked to choose a [key pair]{.alert}
+- You just have to [do it once](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html), and then [you can use the same key pair for all your instances]{.alert}
 - A key pair is a pair of cryptographic keys that you use to [authenticate]{.alert} to an instance
 - Click on `Create a new key pair` and give it a name (e.g. `qtm350`)
 - Choose `ED25519` and `.pem` as the file format
 - Click on `Create Key Pair` and [save it to a secure location]{.alert}
 - It is important to [keep this key safe and know where it is]{.alert}, as it is the only way to access your instance
-- You can also use an existing key pair if you have one
 :::
 
 :::{.column width="60%"}
