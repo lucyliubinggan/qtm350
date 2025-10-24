@@ -22,6 +22,54 @@ editor:
 
 # Hey, there! 😊 <br> I hope you're all doing well! {background-color="#2d4563"}
 
+# A quick reminder! 📢 {background-color="#2d4563"}
+
+## Check your AWS account!
+
+:::{style="margin-top: 50px; font-size: 23px;"}
+:::{.columns}
+:::{.column width="40%"}
+- Please remember to check your AWS account and make sure you don't have any running instances that you are not using
+- Don't forget to [terminate your EC2 instances](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/terminating-instances.html) and [delete your S3 buckets](https://docs.aws.amazon.com/AmazonS3/latest/user-guide/delete-bucket.html)
+- Please also check if you have not been charged by going to the [AWS Billing and Cost Management Dashboard](https://console.aws.amazon.com/billing/home?#/)
+- Just log in with your AWS account and search for [Billing and Cost Management]{.alert}
+- All the charges will be listed there (and they should be zero!)
+:::
+
+:::{.column width="60%"}
+:::{style="text-align: center;"}
+![](figures/aws-billing.png){width="100%"}
+
+Billing and Cost Management Home
+:::
+:::
+:::
+:::
+
+## How to contact AWS support if you were charged by mistake
+
+:::{style="margin-top: 50px; font-size: 23px;"}
+:::{.columns}
+:::{.column width="40%"}
+- If you were charged by mistake, you can contact AWS support to request a refund
+- Go to the [AWS Support Center](https://console.aws.amazon.com/support/home)
+- Click on `Create case`
+- Select `Account and billing support`
+- Fill in the form with your details and explain the situation
+- Submit the case and wait for a response from AWS support (it's usually pretty quick!)
+- If you need help with this, feel free to reach out to me
+:::
+
+:::{.column width="60%"}
+:::{style="text-align: center;"}
+![](figures/aws-support.png){width="100%"}
+
+AWS Support Center
+:::
+:::
+:::
+:::
+
 # Today's lecture 📚 {background-color="#2d4563"}
 
 ## Today's agenda

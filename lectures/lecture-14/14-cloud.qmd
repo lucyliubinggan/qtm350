@@ -600,13 +600,14 @@ Source: [AWS](https://aws.amazon.com/autoscaling)
 ## Creating an AWS account
 ### You can do this later if you want
 
-:::{style="margin-top: 30px; font-size: 26px;"}
+:::{style="margin-top: 30px; font-size: 21px;"}
 :::{.columns}
 :::{.column width="50%"}
-- To create an AWS account, go to [https://aws.amazon.com](https://aws.amazon.com)
+- To create an AWS account, go to <https://aws.amazon.com/free/> and click on [Create a Free Account]{.alert}
+- Then, add your email and choose an account name (any name will do)
 - Enter your account information, and then choose _Verify email address_
-- You will receive an email with a verification link
-- Select _Personal_ and choose _Continue_
+- You will receive an email with a verification link, add the code from the email
+- Follow the instructions to set up your account
 - [Enter your billing information]{.alert}, yes, you need to 😒
 - Enter the code displayed in the CAPTCHA, and then submit
 - Choose [Complete sign up]{.alert}
@@ -617,7 +618,7 @@ Source: [AWS](https://aws.amazon.com/autoscaling)
 :::{style="text-align: center;"}
 ![](figures/aws-registration.png){width=100%}
 
-<https://aws.amazon.com>
+<https://aws.amazon.com/free/>
 :::
 :::
 :::
