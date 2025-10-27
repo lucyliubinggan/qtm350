@@ -131,7 +131,7 @@ AWS Support Center
 :::{style="margin-top: 50px; font-size: 20px;"}
 :::{.columns}
 :::{.column width="50%"}
-- SQLite is a serverless database, which means it does not require a server to run
+- [SQLite is a serverless database]{.alert}, so it does not require a server to run
 - It is [a single file]{.alert} that you can use to store your data
 - This has several advantages, such as:
   - Easy to install and use
@@ -177,6 +177,13 @@ AWS Support Center
 brew install sqlite3
 sqlite3 --version
 ```
+
+- On Ubuntu (WSL), you can install SQLite with:
+
+```{verbatim}
+sudo apt update
+sudo apt-get install sqlite3
+```
 :::
 
 ## Installing SQLite
@@ -185,7 +192,8 @@ sqlite3 --version
 :::{style="margin-top: 50px; font-size: 20px;"}
 :::{.columns}
 :::{.column width="50%"}
-- Windows users can download the SQLite precompiled binaries from the [SQLite website](https://www.sqlite.org/download.html). Download the files that have the `sqlite3` DLL and the command-line shell (`sqlite-dll...` and `sqlite-tools...`)
+- This is [not necessary if you use WSL]{.alert}, but in case you want to install SQLite natively on Windows...
+- ... you can download the SQLite precompiled binaries from the [SQLite website](https://www.sqlite.org/download.html). Download the files that have the `sqlite3` DLL and the command-line shell (`sqlite-dll...` and `sqlite-tools...`)
 - Then follow these steps:
   - Create a folder `C:\>sqlite` and unzip the files in this folder, which will give you `sqlite3.def`, `sqlite3.dll` and `sqlite3.exe` files 
   - Double-click the `sqlite3` file to open the software, and you will see the SQLite prompt
@@ -493,11 +501,11 @@ DROP TABLE students;
 - It is defined when the table is created but can be modified later
 - The schema is important because it ensures that the data is stored correctly and efficiently
 - Usually, there is no need to change the schema frequently, but it is possible to do so if needed
-- You can view it with the `PRAGMA table_info()` command
+- You can view it with the `PRAGMA table_info(table-name)` command
 :::
 
 :::{.column width="50%"}
-- The `PRAGMA table_info()` command returns one row for each column in the table
+- The `PRAGMA table_info(table-name)` command returns one row for each column in the table
 - The columns are:
   - `cid`: Column ID
   - `name`: Column name
@@ -515,7 +523,7 @@ DROP TABLE students;
 
 ## Creating and modifying table schemas
 
-:::{style="margin-top: 50px; font-size: 21px;"}
+:::{style="margin-top: 50px; font-size: 23px;"}
 :::{.columns}
 :::{.column width="50%"}
 - To create a table, use the `CREATE TABLE` command, as we saw before
@@ -533,7 +541,7 @@ DROP TABLE students;
 - To delete a row, use the `DELETE FROM` command
   - Example: `DELETE FROM table_name WHERE condition;`
   - This command deletes all rows that satisfy the condition
-- If you don't specify a condition, it will delete all rows in the table
+- If you don't specify a condition, it will delete all rows in the table (`DELETE FROM table_name;`)
 :::
 :::
 :::
@@ -667,7 +675,7 @@ ORDER BY victories ASC;
 ## Exercise 02 {#sec:exercise02}
 
 :::{style="margin-top: 30px; font-size: 26px;"}
-- List drivers who are either 'German' or 'British' and have victories greater than 50
+- List drivers who are either German or British and have victories greater than 50
 - List all drivers with victories greater than the average victories 
   - Hint: you will have to run another `SELECT` command to get the average victories (a subquery)
   - Aggregate functions are not allowed in the `WHERE` clause. [See the reason why here](https://stackoverflow.com/questions/42470849/why-are-aggregate-functions-not-allowed-in-where-clause). [More about subqueries here.](https://mode.com/sql-tutorial/sql-sub-queries)
@@ -867,7 +875,7 @@ SELECT * FROM students;
 ## Appendix 02 {#sec:appendix02}
 
 :::{style="margin-top: 50px; font-size: 22px;"}
-- Here is the code to list drivers who are either 'German' or 'British' and have victories greater than 50
+- Here is the code to list drivers who are either German or British and have victories greater than 50
 
 ```{sql}
 SELECT driver_name, nationality, victories
