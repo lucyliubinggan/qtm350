@@ -33,7 +33,7 @@ editor:
 - **Parallel computing** is a type of computation in which many [calculations or processes are carried out simultaneously]{.alert}
 - Python has several libraries that allow you to parallelise your code
   - We discussed the `joblib` library, which is a simple and effective way to parallelise your code
-  - But we spent most of our time discussing Dask, which is currently the _de facto_ standard for parallel computing in Python 
+  - But we spent most of our time discussing `Dask`, which is currently the _de facto_ standard for parallel computing in Python 
 - We also saw that [parallel computing is not a panacea]{.alert}: it can be hard to implement and may not always lead to performance improvements
 - But when it works, it works great! 🚀
 :::
@@ -111,25 +111,17 @@ Frank -> Scheduler: I've computed b and am holding on to it!
 ## Setting up a Dask Cluster
 
 :::{style="margin-top: 30px; font-size: 27px;"}
-- First, we need to install Dask and the distributed scheduler
+- First, we need to install Dask and the distributed scheduler. I tested this with `dask==2024.5.0` and `distributed==2024.5.0`
 
 ```{verbatim}
-python -m pip install dask distributed --upgrade
+python -m pip install "dask==2024.5.0" "distributed==2024.5.0"
 ```
 
 - The `distributed` scheduler is the default for Dask and it works great 👍
 - Conda users can install it with:
 
 ```{verbatim}
-conda install dask distributed -c conda-forge
-```
-
-- Or you can source it straight from GitHub:
-
-```{verbatim}
-git clone https://github.com/dask/distributed.git
-cd distributed
-python -m pip install .
+conda install dask=2024.5.0 distributed=2024.5.0 -c conda-forge
 ```
 :::
 
@@ -142,19 +134,16 @@ python -m pip install .
 
 ```{python}
 #| echo: true
-#| eval: false
+#| eval: true
 from dask.distributed import LocalCluster, Client
 
 # Specify a different port for the dashboard
-cluster = LocalCluster(dashboard_address=':8789') 
+# Use fewer workers and threads to avoid resource issues
+cluster = LocalCluster(dashboard_address=':8789', n_workers=2, threads_per_worker=2)
 client = Client(cluster)
 
 # Print the dashboard link
 print(f"Dask dashboard is available at: {cluster.dashboard_link}")
-```
-
-```{verbatim}
-Dask dashboard is available at: http://127.0.0.1:8789/status
 ```
 
 - The `Client` object provides a way to interact with the cluster, submit tasks, and monitor the progress of computations
@@ -181,17 +170,18 @@ Dask dashboard is available at: http://127.0.0.1:8789/status
 
 ```{python}
 #| echo: true
-#| eval: false
+#| eval: true
 import dask.array as da
 
-# Create a random array
-x = da.random.RandomState(42).random((10000, 10000), chunks=(1000, 1000))
+# Create a random array (smaller size for interactive use)
+# For large arrays, consider using a script or Jupyter notebook instead of terminal
+x = da.random.RandomState(42).random((5000, 5000), chunks=(1000, 1000))
 x
 ```
 
 ```{python}
 #| echo: true
-#| eval: false
+#| eval: true
 # Perform a simple computation
 y = (x + x.T).sum()
 
@@ -201,6 +191,50 @@ y.compute()
 
 - The `RandomState` object is used to set a seed number
 - We can inspect the client dashboard to see how the computation was distributed across the workers
+:::
+
+## Troubleshooting Common Issues
+
+:::{style="margin-top: 30px; font-size: 21px;"}
+:::{.columns}
+:::{.column width="50%"}
+If you encounter errors like:
+
+- `"No buffer space available"`
+- `"Stream is closed"`
+- `"CommClosedError"`
+
+This typically happens when:
+
+- Running large Dask computations in an interactive terminal
+- System runs out of network resources for inter-worker communication
+- Array size is too large for your system's resources
+:::
+
+:::{.column width="50%"}
+**Solutions:**
+
+- Use smaller array sizes
+- Limit the number of workers and threads
+- Run code in a Python script instead of interactive terminal
+- Use Jupyter notebooks which handle resources better
+- Close and restart your Dask client if it becomes unresponsive
+
+```python
+# Better configuration for terminal use
+from dask.distributed import LocalCluster, Client
+
+# Use fewer resources for interactive terminal sessions
+cluster = LocalCluster(
+    dashboard_address=':8789',
+    n_workers=2,           # Limit workers
+    threads_per_worker=2,  # Limit threads per worker
+    memory_limit='2GB'     # Limit memory per worker
+)
+client = Client(cluster)
+```
+:::
+:::
 :::
 
 ## Testing the Dask Client
@@ -283,17 +317,18 @@ y.compute()
 ## What is Dask ML?
 
 :::{style="margin-top: 30px; font-size: 22px;"}
-- First, let's install Dask ML:
+- First, let's install Dask ML (using version 2024.4.4 for this example):
 
 ```{verbatim}
-!pip install dask-ml
+pip install "dask-ml==2024.4.4" "scikit-learn==1.6.0"
 ```
 
-- And then import the necessary modules, mainly scikit-learn:
+- And then import the necessary modules, mainly scikit-learn (here I'm using version 1.6.0 for compatibility):
 
 ```{python}
 #| echo: true
 #| eval: true
+import time
 import numpy as np
 from dask.distributed import LocalCluster, Client
 import joblib
@@ -331,7 +366,7 @@ from sklearn.svm import SVC
 :::{style="margin-top: 30px; font-size: 19px;"}
 ```{python}
 #| echo: true
-#| eval: false
+#| eval: true
 # Load the digits dataset
 digits = load_digits()   
 
@@ -358,6 +393,7 @@ search = RandomizedSearchCV(
 start_time = time.time()
 with joblib.parallel_backend('dask'):
     search.fit(digits.data, digits.target)
+
 end_time = time.time()
 
 # Calculate the elapsed time
@@ -369,13 +405,6 @@ print("Best score: ", search.best_score_)
 print("Best estimator: ", search.best_estimator_)
 print("Time taken: {:.2f} seconds".format(elapsed_time))
 ```
-
-```{verbatim}
-Best parameters found:  {'tol': 0.0001, 'gamma': 0.0001, 'class_weight': None, 'C': 10.0}
-Best score:  0.9565943238731217
-Best estimator:  SVC(C=10.0, gamma=0.0001, tol=0.0001)
-Time taken: 2.68 seconds
-```
 :::
 
 ## Now let's tackle the problems we discussed earlier...
@@ -383,7 +412,7 @@ Time taken: 2.68 seconds
 
 :::{style="margin-top: 30px; font-size: 30px;"}
 
-- The model was trained in 2.68 seconds, which is pretty fast
+- The model was trained in just a few seconds!
 - The dataset is small, so we are not memory constrained
 - The model is not complex, so we are not compute constrained
 - So in this case we only used Dask to parallelise the search, but we could have used scikit-learn alone
@@ -405,16 +434,15 @@ Time taken: 2.68 seconds
 ## Incremental Search
 
 :::{style="margin-top: 30px; font-size: 22px;"}
-- Let's see an example with 2 million possible hyperparameter combinations and a dataset with 100 million samples (!)
+- Let's see an example with 2 million possible hyperparameter combinations and a dataset with 10 million samples (!)
 - Combined, `X` and `y` will take up about 16 GB of memory
 - We will use the `make_classification` function from `dask_ml.datasets` to create the dataset
 
 ```{python}
 #| echo: true
-#| eval: false
-import time
+#| eval: true
 from dask_ml.datasets import make_classification
-X, y = make_classification(n_samples=100000000, n_features=20,
+X, y = make_classification(n_samples=10000000, n_features=20,
                            chunks=100000, random_state=0)
 
 # Create the model
@@ -428,7 +456,7 @@ params = {'alpha': np.logspace(-2, 1, num=1000),
 
 # Perform the search
 from dask_ml.model_selection import IncrementalSearchCV
-search = IncrementalSearchCV(model, params, random_state=0)
+search = IncrementalSearchCV(model, params, random_state=0, decay_rate=None)
 
 start_time = time.time()
 search.fit(X, y, classes=[0, 1])
@@ -442,14 +470,6 @@ print("Best parameters found: ", search.best_params_)
 print("Best score: ", search.best_score_)
 print("Best estimator: ", search.best_estimator_)
 print(f"Time taken: {elapsed_time:.2f} seconds")
-```
-
-```{verbatim}
-Best parameters found:  {'l1_ratio': 0.7117117117117117, 'average': False, 'alpha': 0.02860595535175742}
-Best score:  0.66976
-Best estimator:  SGDClassifier(alpha=0.02860595535175742, l1_ratio=0.7117117117117117,
-              penalty='elasticnet', random_state=0)
-Time taken: 51.71 seconds
 ```
 :::
 
@@ -469,18 +489,18 @@ Time taken: 51.71 seconds
 - Here we have a case where the model is too complex to train in a reasonable amount of time
 - Or the models require specialised hardware like GPUs
 - The best class for this case is `HyperbandSearchCV`, which is a hyperparameter search algorithm that is based on the [Hyperband algorithm](https://arxiv.org/abs/1603.06560)
-- In a nutshell, this algorithm is easy to use, has strong mathematical motivation and performs remarkably well 
+- In a nutshell, this algorithm is easy to use, has strong mathematical motivation and often performs well 
 
 ```{python}
 #| echo: true
-#| eval: false
+#| eval: true
 from dask_ml.model_selection import HyperbandSearchCV
 from dask_ml.datasets import make_classification
 from sklearn.linear_model import SGDClassifier
 
 X, y = make_classification(chunks=20)
 est = SGDClassifier(tol=1e-3)
-param_dist = {'alpha': np.logspace(-4, 0, num=1000),
+param_dist = {'alpha': np.logspace(-2, 0, num=1000),
               'loss': ['hinge', 'log_loss', 'modified_huber', 'squared_hinge'],
               'average': [True, False]}
 
@@ -496,13 +516,6 @@ print("Best score: ", search.best_score_)
 print("Best estimator: ", search.best_estimator_)
 print(f"Time taken: {elapsed_time:.2f} seconds")
 ```
-
-```{verbatim}
-Best parameters found:  {'loss': 'modified_huber', 'average': False, 'alpha': 0.07427982482564918}
-Best score:  0.85
-Best estimator:  SGDClassifier(alpha=0.07427982482564918, loss='modified_huber')
-Time taken: 1.62 seconds
-```
 :::
 
 ## Compute and memory constrained
@@ -517,9 +530,9 @@ Time taken: 1.62 seconds
 - ... or pray to the machine learning gods 😂
 :::
 
-# More Dask with AutoML 🤖 {background-color="#2d4563"}
+# More AutoML 🤖 {background-color="#2d4563"}
 
-## TPOT + Dask
+## TPOT 
 
 :::{style="margin-top: 30px; font-size: 24px;"}
 - Here we will use [TPOT](https://epistasislab.github.io/tpot/), which is a Python library that automatically creates and optimises machine learning pipelines using genetic programming
@@ -528,10 +541,10 @@ Time taken: 1.62 seconds
 - First, let's install TPOT:
 
 ```{verbatim}
-!pip install tpot
+pip install "TPOT==0.12.2"
 ```
 
-- I'm using Python 3.9.6 for this example, so your mileage may vary
+- I'm using Python 3.13.2 for this example, so your mileage may vary
 :::
 
 ## Using TPOT
@@ -541,11 +554,12 @@ Time taken: 1.62 seconds
 
 ```{python}
 #| echo: true
-#| eval: false
+#| eval: true
 import time
 from tpot import TPOTClassifier
 from sklearn.datasets import load_digits
 from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score
 
 # Load the digits dataset
 digits = load_digits()
@@ -556,67 +570,20 @@ X_train, X_test, y_train, y_test = train_test_split(digits.data, digits.target,
 
 # Create the TPOTClassifier object
 start_time = time.time()
-tpot = TPOTClassifier(generations=5, population_size=20, verbosity=2, random_state=42)
+tpot = TPOTClassifier(generations=2, population_size=5, verbose=2, random_state=42)
 
 # Fit the model
 tpot.fit(X_train, y_train)
 end_time = time.time()
 elapsed_time = end_time - start_time
 
-# Print the score
-print(tpot.score(X_test, y_test))
+# Get predictions and calculate score
+y_pred = tpot.predict(X_test)
+score = accuracy_score(y_test, y_pred)
+print(f"Score: {score}")
 print(f"Time taken: {elapsed_time:.2f} seconds")
 ```
 
-```{verbatim}
-Best pipeline: KNeighborsClassifier(input_matrix, n_neighbors=3, p=2, weights=distance)
-0.9822222222222222
-Time taken: 57.38 seconds
-```
-:::
-
-## Using TPOT with Dask
-
-:::{style="margin-top: 30px; font-size: 19px;"}
-- Now let's see an example using Dask
-- It is _really easy_ to use Dask with TPOT
-- I mean it! Just add `use_dask=True` to the `TPOTClassifier` object and you are good to go 😊
-
-```{python}
-#| echo: true
-#| eval: false
-import time
-from tpot import TPOTClassifier
-from sklearn.datasets import load_digits
-from sklearn.model_selection import train_test_split
-
-# Load the digits dataset
-digits = load_digits()
-
-# Split the dataset into training and testing sets
-X_train, X_test, y_train, y_test = train_test_split(digits.data, digits.target,
-                                                    train_size=0.75, test_size=0.25)
-
-# Create the TPOTClassifier object
-start_time = time.time()
-tpot = TPOTClassifier(generations=5, population_size=20, 
-                      verbosity=2, random_state=42, use_dask=True)
-
-# Fit the model
-tpot.fit(X_train, y_train)
-end_time = time.time()
-elapsed_time = end_time - start_time
-
-# Print the score
-print(tpot.score(X_test, y_test))
-print(f"Time taken: {elapsed_time:.2f} seconds")
-```
-
-```{verbatim}
-Best pipeline: KNeighborsClassifier(input_matrix, n_neighbors=3, p=2, weights=distance)
-0.9822222222222222
-Time taken: 20.40 seconds
-```
 :::
 
 ## Time series forecasting with Prophet
@@ -632,7 +599,7 @@ Time taken: 20.40 seconds
 - First, let's install the library:
 
 ```{verbatim}
-!pip install prophet
+pip install prophet
 ```
 :::
 
@@ -662,7 +629,7 @@ from prophet import Prophet
 
 ```{python}
 #| echo: true
-#| eval: false
+#| eval: true
 df = pd.read_csv(
     'https://raw.githubusercontent.com/facebook/prophet/master/examples/example_wp_log_peyton_manning.csv',
     parse_dates=['ds']
@@ -679,7 +646,7 @@ df.head()
 
 ```{python}
 #| echo: true
-#| eval: false
+#| eval: true
 df.plot(x='ds', y='y')
 
 m = Prophet(daily_seasonality=False)
@@ -694,7 +661,7 @@ m.fit(df)
 
 ```{python}
 #| echo: true
-#| eval: false
+#| eval: true
 future = m.make_future_dataframe(periods=365)
 forecast = m.predict(future)
 m.plot(forecast)
@@ -725,8 +692,7 @@ m.plot(forecast)
 import prophet.diagnostics
 df_cv = prophet.diagnostics.cross_validation(
     m, initial="730 days", period="180 days", horizon="365 days",
-    parallel="dask"
-)
+    parallel="dask")
 df_cv.head()
 ```
 
