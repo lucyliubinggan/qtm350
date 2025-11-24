@@ -70,6 +70,14 @@ editor:
 :::
 :::
 
+## Torvalds on vibe coding
+
+:::{style="margin-top: 30px; font-size: 22px; text-align: center;"}
+![](figures/torvalds.png)
+
+<https://www.theregister.com/2025/11/18/linus_torvalds_vibe_coding/>
+:::
+
 # Docker for Data Science 🐳 {background-color="#2d4563"}
 
 ## A container for all tools we covered in this course
